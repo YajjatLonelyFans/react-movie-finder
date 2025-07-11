@@ -1,12 +1,30 @@
 import MovieCard from "../Components/MovieCards"
-import { useState } from "react"
+import { useState , useEffect } from "react"
+import { getPopular , searchMovies } from "../Services/api"
 export default function Home(){
     const [target , setTarget] = useState("") 
-    const movies = [
-        {id:1 , title : "The Matrix" , release_date:2020},
-        {id:2 , title : "The Avengers" , release_date:2011},
-        {id:3 , title : "Alien" , release_date:1998}
-    ]
+    const [movies , setMovies] = useState([])
+    const [error , setError] = useState(null)
+    const [loading , setLoading] = useState(true)
+
+    useEffect(()=>{
+        const loadPopularMovies = async ()=>{
+            try{
+                const popularMovies = await getPopular()
+                console.log("Fetched popular movies:", popularMovies);
+                setMovies(popularMovies)
+            } catch(err){
+                console.log(err)
+                setError("Failed to load Movies...")
+            }finally{
+                setLoading(false)
+            }
+        }
+        loadPopularMovies();
+    },[])
+
+
+
     const handleSubmit = (e)=>{
         e.preventDefault()
         alert(target)
